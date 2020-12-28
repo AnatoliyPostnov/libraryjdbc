@@ -16,8 +16,8 @@ create table book
 
 create table author
 (
-    id   bigint primary key,
-    name varchar(20),
+    id      bigint primary key,
+    name    varchar(20),
     surname varchar(20)
 );
 
