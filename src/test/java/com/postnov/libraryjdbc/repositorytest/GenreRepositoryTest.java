@@ -11,6 +11,8 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class GenreRepositoryTest {
 
     @Autowired
@@ -21,7 +23,6 @@ class GenreRepositoryTest {
     }
 
     @Test
-    @Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void saveTest() {
         Genre genre = new Genre((long) 1, "genre_name");
         Genre savedGenre = genreRepository.save(genre);

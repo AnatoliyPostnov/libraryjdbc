@@ -11,6 +11,8 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class AuthorRepositoryTest {
 
     @Autowired
@@ -21,7 +23,6 @@ class AuthorRepositoryTest {
     }
 
     @Test
-    @Sql(value = {"/drop_data.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void saveTest() {
         Author author = new Author((long) 1, "author_name", "author_surname");
         Author savedAuthor = authorRepository.save(author);

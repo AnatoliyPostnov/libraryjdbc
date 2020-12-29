@@ -32,16 +32,15 @@ public class GenreRepositoryImpl implements GenreRepository {
         }
 
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("id", genre.getId())
                 .addValue("name", genre.getName());
 
         namedParameterJdbcOperations.update(
-                "insert into genre(id, name) values(:id, :name)",
+                "insert into genre(name) values(:name)",
                 params
         );
 
         return namedParameterJdbcOperations.queryForObject(
-                "select * from genre where id = :id",
+                "select * from genre where name = :name",
                 params,
                 genreMapper
         );

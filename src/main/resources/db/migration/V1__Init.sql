@@ -1,29 +1,35 @@
 create table genre
 (
-    id   bigint primary key,
-    name varchar(20)
+    id   bigserial primary key,
+    name varchar(20),
+
+    UNIQUE (name)
 );
 
 create table book
 (
-    id       bigint primary key,
+    id       bigserial primary key,
     name     varchar(20),
     genre_id bigint,
 
     constraint book_genre_fk foreign key (genre_id)
-        references genre (id)
+        references genre (id),
+
+    UNIQUE (name)
 );
 
 create table author
 (
-    id   bigint primary key,
-    name varchar(20),
-    surname varchar(20)
+    id      bigserial primary key,
+    name    varchar(20),
+    surname varchar(20),
+
+    UNIQUE (name, surname)
 );
 
 create table book_author
 (
-    id        bigint primary key,
+    id        bigserial primary key,
     book_id   bigint,
     author_id bigint,
 
@@ -31,5 +37,7 @@ create table book_author
         references book (id),
 
     constraint book_author_author_fk foreign key (author_id)
-        references author (id)
+        references author (id),
+
+    UNIQUE (book_id, author_id)
 )

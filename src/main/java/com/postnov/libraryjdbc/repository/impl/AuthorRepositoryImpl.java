@@ -32,17 +32,16 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         }
 
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("id", author.getId())
                 .addValue("name", author.getName())
                 .addValue("surname", author.getSurname());
 
         namedParameterJdbcOperations.update(
-                "insert into author (id, name, surname) values (:id, :name, :surname)",
+                "insert into author (name, surname) values (:name, :surname)",
                 params
         );
 
         return namedParameterJdbcOperations.queryForObject(
-                "select * from author where id = :id",
+                "select * from author where name = :name and surname = :surname",
                 params,
                 authorMapper
         );

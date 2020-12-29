@@ -32,17 +32,16 @@ public class BookRepositoryImpl implements BookRepository {
         }
 
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("id", book.getId())
                 .addValue("name", book.getName())
                 .addValue("genre_id", book.getGenre_id());
 
         namedParameterJdbcOperations.update(
-                "insert into book (id, name, genre_id) values (:id, :name, :genre_id)",
+                "insert into book (name, genre_id) values (:name, :genre_id)",
                 params
         );
 
         return namedParameterJdbcOperations.queryForObject(
-                "select * from book where id = :id",
+                "select * from book where name = :name and genre_id = :genre_id",
                 params,
                 bookMapper
         );
