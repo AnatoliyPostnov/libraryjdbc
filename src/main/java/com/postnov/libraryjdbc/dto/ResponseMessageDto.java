@@ -9,10 +9,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-public class AuthorDto implements Serializable {
+public class ResponseMessageDto implements Serializable {
 
-    private String name;
+    private String typeException;
 
-    private String surname;
+    private String message;
 
 }

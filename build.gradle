@@ -19,6 +19,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.8'
 	compile 'org.flywaydb:flyway-core:6.0.8'
 	runtimeOnly 'org.postgresql:postgresql'
+	compile 'org.modelmapper:modelmapper:2.3.5'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
