@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -29,4 +31,11 @@ class GenreRepositoryTest {
         assertEquals(genre, savedGenre);
     }
 
+    @Test
+    void finedGenreByGenreTest() {
+        Genre genre = new Genre((long) 1, "genre_name");
+        genreRepository.save(genre);
+        Optional<Genre> finedGenre = genreRepository.finedGenreByGenre(genre);
+        assertEquals(genre, finedGenre.get());
+    }
 }

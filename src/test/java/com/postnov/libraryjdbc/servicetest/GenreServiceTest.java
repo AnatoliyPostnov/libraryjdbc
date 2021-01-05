@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -24,14 +26,29 @@ class GenreServiceTest {
     private GenreRepository genreRepository;
 
     @Test
-    void saveTest() {
+    void saveIfGenreNotExistInDbTest() {
         GenreDto genre = createGenreDto();
         Genre savedGenre = mock(Genre.class);
+        when(genreRepository.finedGenreByGenre(savedGenre)).thenReturn(Optional.empty());
         when(genreRepository.save(new Genre(genre.getName()))).thenReturn(savedGenre);
 
         genreService.save(genre);
 
+        verify(genreRepository).finedGenreByGenre(new Genre(genre.getName()));
         verify(genreRepository).save(new Genre(genre.getName()));
+    }
+
+    @Test
+    void saveIfGenreExistInDbTest() {
+        GenreDto genre = createGenreDto();
+        Genre savedGenre = mock(Genre.class);
+        when(genreRepository.finedGenreByGenre(new Genre(genre.getName()))).thenReturn(Optional.ofNullable(savedGenre));
+        when(genreRepository.save(new Genre(genre.getName()))).thenReturn(savedGenre);
+
+        genreService.save(genre);
+
+        verify(genreRepository).finedGenreByGenre(new Genre(genre.getName()));
+        verify(genreRepository, never()).save(new Genre(genre.getName()));
     }
 
     private GenreDto createGenreDto() {
