@@ -6,6 +6,8 @@ import com.postnov.libraryjdbc.repository.AuthorRepository;
 import com.postnov.libraryjdbc.service.AuthorService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
@@ -17,7 +19,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author save(AuthorDto author) {
-        return authorRepository.save(new Author(author.getName(), author.getSurname()));
+
+        Optional<Author> authorInDb = authorRepository.finedAuthorByAuthor(new Author(author.getName(), author.getSurname()));
+
+        if (authorInDb.isEmpty()) {
+            return authorRepository.save(new Author(author.getName(), author.getSurname()));
+        } else {
+            return authorInDb.get();
+        }
     }
 
 }

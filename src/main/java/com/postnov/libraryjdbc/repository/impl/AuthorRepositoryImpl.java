@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Log4j2
 public class AuthorRepositoryImpl implements AuthorRepository {
@@ -40,11 +42,27 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 params
         );
 
-        return namedParameterJdbcOperations.queryForObject(
-                "select * from author where name = :name and surname = :surname",
-                params,
-                authorMapper
-        );
+        return finedAuthorByAuthor(author).get();
+    }
+
+    @Override
+    public Optional<Author> finedAuthorByAuthor(Author author) {
+
+        if (author == null) {
+            log.error("The author cannot be fined in the database because he is null");
+            throw new NullPointerException();
+        }
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", author.getName())
+                .addValue("surname", author.getSurname());
+
+        return Optional.ofNullable(
+                namedParameterJdbcOperations.queryForObject(
+                        "select * from author where name = :name and surname = :surname",
+                        params,
+                        authorMapper
+                ));
     }
 
 }

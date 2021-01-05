@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Log4j2
 public class GenreRepositoryImpl implements GenreRepository {
@@ -39,11 +41,26 @@ public class GenreRepositoryImpl implements GenreRepository {
                 params
         );
 
-        return namedParameterJdbcOperations.queryForObject(
-                "select * from genre where name = :name",
-                params,
-                genreMapper
-        );
+        return finedGenreByGenre(genre).get();
+    }
+
+    @Override
+    public Optional<Genre> finedGenreByGenre(Genre genre) {
+
+        if (genre == null) {
+            log.error("The genre cannot be fined in the database because he is null");
+            throw new NullPointerException();
+        }
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", genre.getName());
+
+        return Optional.ofNullable(
+                namedParameterJdbcOperations.queryForObject(
+                        "select * from genre where name = :name",
+                        params,
+                        genreMapper
+                ));
     }
 
 }

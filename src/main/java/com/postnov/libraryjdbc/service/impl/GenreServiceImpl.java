@@ -6,6 +6,8 @@ import com.postnov.libraryjdbc.repository.GenreRepository;
 import com.postnov.libraryjdbc.service.GenreService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class GenreServiceImpl implements GenreService {
 
@@ -17,6 +19,13 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre save(GenreDto genre) {
-        return genreRepository.save(new Genre(genre.getName()));
+
+        Optional<Genre> genreInDb = genreRepository.finedGenreByGenre(new Genre(genre.getName()));
+
+        if (genreInDb.isEmpty()){
+            return genreRepository.save(new Genre(genre.getName()));
+        } else {
+            return genreInDb.get();
+        }
     }
 }
