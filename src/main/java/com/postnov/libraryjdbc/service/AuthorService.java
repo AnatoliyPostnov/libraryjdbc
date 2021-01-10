@@ -7,4 +7,6 @@ public interface AuthorService {
 
     Author save(AuthorDto author);
 
+    AuthorDto getAuthorById(Long id);
+
 }

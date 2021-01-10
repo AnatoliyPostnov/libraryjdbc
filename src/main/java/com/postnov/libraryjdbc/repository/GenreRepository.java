@@ -10,4 +10,5 @@ public interface GenreRepository {
 
     Optional<Genre> finedGenreByGenre(Genre genre);
 
+    Optional<Genre> finedGenreById(Long id);
 }

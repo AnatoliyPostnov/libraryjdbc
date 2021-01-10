@@ -5,6 +5,8 @@ import com.postnov.libraryjdbc.repository.BookAuthorRepository;
 import com.postnov.libraryjdbc.service.BookAuthorService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookAuthorServiceImpl implements BookAuthorService {
 
@@ -17,5 +19,10 @@ public class BookAuthorServiceImpl implements BookAuthorService {
     @Override
     public BookAuthor save(BookAuthor bookAuthor) {
         return bookAuthorRepository.save(bookAuthor);
+    }
+
+    @Override
+    public List<Long> getAuthorsIdByBookId(Long bookId) {
+        return bookAuthorRepository.finedAuthorsIdByBookId(bookId);
     }
 }

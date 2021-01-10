@@ -9,6 +9,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Repository
 @Log4j2
 public class BookAuthorRepositoryImpl implements BookAuthorRepository {
@@ -45,6 +48,28 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
                 params,
                 bookAuthorMapper
         );
+    }
+
+    @Override
+    public List<Long> finedAuthorsIdByBookId(Long bookId) {
+
+        if (bookId == null) {
+            log.error("The list authorsId cannot be fined in the database because input bookId is null");
+            throw new NullPointerException();
+        }
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("book_id", bookId);
+
+        return namedParameterJdbcOperations.query(
+                "select * from book_author where book_id = :book_id",
+                params,
+                bookAuthorMapper
+        )
+                .stream()
+                .map(BookAuthor::getAuthor_id)
+                .collect(Collectors.toList());
+
     }
 
 }

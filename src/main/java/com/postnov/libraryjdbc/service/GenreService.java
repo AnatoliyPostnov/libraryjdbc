@@ -7,4 +7,6 @@ public interface GenreService {
 
     Genre save(GenreDto genre);
 
+    GenreDto getGenreById(Long id);
+
 }

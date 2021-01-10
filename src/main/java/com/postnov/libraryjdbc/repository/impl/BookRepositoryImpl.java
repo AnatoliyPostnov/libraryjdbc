@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Log4j2
 public class BookRepositoryImpl implements BookRepository {
@@ -40,11 +42,27 @@ public class BookRepositoryImpl implements BookRepository {
                 params
         );
 
-        return namedParameterJdbcOperations.queryForObject(
-                "select * from book where name = :name and genre_id = :genre_id",
-                params,
-                bookMapper
-        );
+        return finedBookByBookName(book.getName()).get();
+    }
+
+    @Override
+    public Optional<Book> finedBookByBookName(String bookName) {
+
+        if (bookName == null) {
+            log.error("The book cannot be fined in the database because he is null");
+            throw new NullPointerException();
+        }
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", bookName);
+
+
+        return Optional.ofNullable(
+                namedParameterJdbcOperations.queryForObject(
+                        "select * from book where name = :name",
+                        params,
+                        bookMapper
+                ));
     }
 
 }

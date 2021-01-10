@@ -28,4 +28,14 @@ public class GenreServiceImpl implements GenreService {
             return genreInDb.get();
         }
     }
+
+    @Override
+    public GenreDto getGenreById(Long id) {
+        Genre finedGenre = genreRepository
+                .finedGenreById(id)
+                .orElseThrow(() -> new RuntimeException(String.format("Genre with book id: %s not found", id)));
+        GenreDto finedGenreDto =  new GenreDto();
+        finedGenreDto.setName(finedGenre.getName());
+        return finedGenreDto;
+    }
 }

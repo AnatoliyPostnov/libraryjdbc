@@ -29,4 +29,14 @@ public class AuthorServiceImpl implements AuthorService {
         }
     }
 
+    @Override
+    public AuthorDto getAuthorById(Long id) {
+        Author finedAuthor = authorRepository.finedAuthorByAuthorId(id)
+                .orElseThrow(() -> new RuntimeException(String.format("Author with id: %s was not found exception", id)));
+        return AuthorDto.builder()
+                .name(finedAuthor.getName())
+                .surname(finedAuthor.getSurname())
+                .build();
+    }
+
 }

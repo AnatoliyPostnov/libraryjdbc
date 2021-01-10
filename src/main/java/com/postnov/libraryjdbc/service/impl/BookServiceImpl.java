@@ -1,6 +1,8 @@
 package com.postnov.libraryjdbc.service.impl;
 
+import com.postnov.libraryjdbc.dto.AuthorDto;
 import com.postnov.libraryjdbc.dto.BookDto;
+import com.postnov.libraryjdbc.dto.GenreDto;
 import com.postnov.libraryjdbc.model.Book;
 import com.postnov.libraryjdbc.model.BookAuthor;
 import com.postnov.libraryjdbc.model.Genre;
@@ -11,6 +13,10 @@ import com.postnov.libraryjdbc.service.BookService;
 import com.postnov.libraryjdbc.service.GenreService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -46,6 +52,32 @@ public class BookServiceImpl implements BookService {
                 .map(authorService::save)
                 .forEach(author -> bookAuthorService.save(new BookAuthor(savedBook.getId(), author.getId())));
 
+    }
+
+    @Override
+    public Optional<BookDto> getBookByBookName(String bookName) {
+
+        Optional<Book> finedBookInDbOptional = bookRepository.finedBookByBookName(bookName);
+
+        if (finedBookInDbOptional.isPresent()) {
+
+            Book finedBookInDb = finedBookInDbOptional.get();
+            GenreDto finedGenreInDb = genreService.getGenreById(finedBookInDb.getGenre_id());
+            List<Long> authorsId = bookAuthorService.getAuthorsIdByBookId(finedBookInDb.getId());
+            List<AuthorDto> authors = authorsId.stream()
+                    .map(authorService::getAuthorById)
+                    .collect(Collectors.toList());
+
+            return Optional.ofNullable(
+                    BookDto.builder()
+                            .name(finedBookInDb.getName())
+                            .authors(authors)
+                            .genre(finedGenreInDb)
+                            .build()
+            );
+        }
+
+        return Optional.empty();
     }
 
 }
