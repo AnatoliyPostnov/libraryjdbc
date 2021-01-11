@@ -29,10 +29,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     @Override
     public Author save(Author author) {
 
-        if (author == null) {
-            log.error("The author cannot be saved to the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(author, "The author cannot be saved to the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", author.getName())
@@ -49,10 +46,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     @Override
     public Optional<Author> finedAuthorByAuthor(Author author) {
 
-        if (author == null) {
-            log.error("The author cannot be fined in the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(author, "The author cannot be fined in the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", author.getName())
@@ -73,26 +67,37 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         }
 
         return finedAuthor;
-
     }
 
     @Override
     public Optional<Author> finedAuthorByAuthorId(Long authorId) {
 
-        if (authorId == null) {
-            log.error("The author cannot be fined in the database because input authorId is null");
-            throw new NullPointerException();
-        }
+        checkForNull(authorId, "The author cannot be fined in the database because input authorId is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", authorId);
 
-        return Optional.ofNullable(
-                namedParameterJdbcOperations.queryForObject(
-                        "select * from author where id = :id",
-                        params,
-                        authorMapper
-                ));
+        Optional<Author> finedAuthor = Optional.empty();
+
+        try {
+            finedAuthor = Optional.ofNullable(
+                    namedParameterJdbcOperations.queryForObject(
+                            "select * from author where id = :id",
+                            params,
+                            authorMapper
+                    )
+            );
+        } catch (EmptyResultDataAccessException ex) {
+            log.info(String.format("author with id = %s was not found", authorId));
+        }
+
+        return finedAuthor;
     }
 
+    private void checkForNull(Object object, String message) {
+        if (object == null) {
+            log.error(message);
+            throw new NullPointerException();
+        }
+    }
 }

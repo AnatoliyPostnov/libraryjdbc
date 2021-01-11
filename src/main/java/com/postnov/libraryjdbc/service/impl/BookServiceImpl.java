@@ -3,6 +3,7 @@ package com.postnov.libraryjdbc.service.impl;
 import com.postnov.libraryjdbc.dto.AuthorDto;
 import com.postnov.libraryjdbc.dto.BookDto;
 import com.postnov.libraryjdbc.dto.GenreDto;
+import com.postnov.libraryjdbc.exception.NotFoundException;
 import com.postnov.libraryjdbc.model.Book;
 import com.postnov.libraryjdbc.model.BookAuthor;
 import com.postnov.libraryjdbc.model.Genre;
@@ -77,7 +78,6 @@ public class BookServiceImpl implements BookService {
             );
         }
 
-        return Optional.empty();
+        throw new NotFoundException(bookName);
     }
-
 }

@@ -39,4 +39,10 @@ class AuthorRepositoryTest {
         assertEquals(author, finedAuthor.get());
     }
 
+    @Test
+    void finedAuthorByAuthorIfAuthorIsNotInDbTest() {
+        Author author = new Author((long) 1, "author_name", "author_surname");
+        Optional<Author> finedAuthor = authorRepository.finedAuthorByAuthor(author);
+        assertEquals(Optional.empty(), finedAuthor);
+    }
 }

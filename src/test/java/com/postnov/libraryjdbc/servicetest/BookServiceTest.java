@@ -21,7 +21,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Collections;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -68,6 +70,36 @@ class BookServiceTest {
         verify(bookRepository).save(new Book(bookDto.getName(), savedGenre.getId()));
         verify(authorService).save(bookDto.getAuthors().get(0));
         verify(bookAuthorService).save(any(BookAuthor.class));
+    }
+
+    @Test
+    void getBookByBookNameTest() {
+        GenreDto genre = mock(GenreDto.class);
+        AuthorDto author = mock(AuthorDto.class);
+        Book finedBook = new Book("bookName", (long) 1);
+        finedBook.setId((long) 1);
+
+        when(bookRepository.finedBookByBookName("bookName")).thenReturn(Optional.of(finedBook));
+        when(genreService.getGenreById((long) 1)).thenReturn(genre);
+        when(bookAuthorService.getAuthorsIdByBookId((long) 1)).thenReturn(Collections.singletonList((long) 1));
+        when(authorService.getAuthorById((long) 1)).thenReturn(author);
+
+        Optional<BookDto> resultBookDto = bookService.getBookByBookName("bookName");
+
+        verify(bookRepository).finedBookByBookName("bookName");
+        verify(genreService).getGenreById((long) 1);
+        verify(bookAuthorService).getAuthorsIdByBookId((long) 1);
+        verify(authorService).getAuthorById((long) 1);
+
+        BookDto finedBookDto = BookDto.builder()
+                        .name("bookName")
+                        .authors(Collections.singletonList(author))
+                        .genre(genre)
+                        .build();
+
+        assertEquals(resultBookDto.get().getName(), finedBookDto.getName());
+        assertEquals(resultBookDto.get().getAuthors(), finedBookDto.getAuthors());
+        assertEquals(resultBookDto.get().getGenre(), finedBookDto.getGenre());
     }
 
     private BookDto createBookDto() {

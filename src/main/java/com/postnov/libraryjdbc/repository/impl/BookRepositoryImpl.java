@@ -4,6 +4,7 @@ import com.postnov.libraryjdbc.model.Book;
 import com.postnov.libraryjdbc.repository.BookRepository;
 import com.postnov.libraryjdbc.repository.mapper.BookMapper;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -28,10 +29,7 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Book save(Book book) {
 
-        if (book == null) {
-            log.error("The book cannot be saved to the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(book, "The book cannot be saved to the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", book.getName())
@@ -48,21 +46,33 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Optional<Book> finedBookByBookName(String bookName) {
 
-        if (bookName == null) {
-            log.error("The book cannot be fined in the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(bookName, "The book cannot be fined in the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", bookName);
 
 
-        return Optional.ofNullable(
-                namedParameterJdbcOperations.queryForObject(
-                        "select * from book where name = :name",
-                        params,
-                        bookMapper
-                ));
+        Optional<Book> finedBook = Optional.empty();
+
+        try {
+            finedBook = Optional.ofNullable(
+                    namedParameterJdbcOperations.queryForObject(
+                            "select * from book where name = :name",
+                            params,
+                            bookMapper
+                    )
+            );
+        } catch (EmptyResultDataAccessException ex) {
+            log.info(String.format("book with name = %s was not found", bookName));
+        }
+
+        return finedBook;
     }
 
+    private void checkForNull(Object object, String message) {
+        if (object == null) {
+            log.error(message);
+            throw new NullPointerException();
+        }
+    }
 }

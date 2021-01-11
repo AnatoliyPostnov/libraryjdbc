@@ -29,10 +29,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public Genre save(Genre genre) {
 
-        if (genre == null) {
-            log.error("The genre cannot be saved to the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(genre, "The genre cannot be saved to the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", genre.getName());
@@ -48,10 +45,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public Optional<Genre> finedGenreByGenre(Genre genre) {
 
-        if (genre == null) {
-            log.error("The genre cannot be fined in the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(genre, "The genre cannot be fined in the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", genre.getName());
@@ -76,21 +70,32 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public Optional<Genre> finedGenreById(Long id) {
 
-        if (id == null) {
-            log.error("The genre cannot be fined in the database because input id is null");
-            throw new NullPointerException();
-        }
+        checkForNull(id, "The genre cannot be fined in the database because input id is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
 
-        return Optional.ofNullable(
-                namedParameterJdbcOperations.queryForObject(
-                        "select * from genre where id = :id",
-                        params,
-                        genreMapper
-                )
-        );
+        Optional<Genre> finedGenre = Optional.empty();
+
+        try {
+            finedGenre = Optional.ofNullable(
+                    namedParameterJdbcOperations.queryForObject(
+                            "select * from genre where id = :id",
+                            params,
+                            genreMapper
+                    )
+            );
+        } catch (EmptyResultDataAccessException ex) {
+            log.info(String.format("genre with id = %s was not found", id));
+        }
+
+        return finedGenre;
     }
 
+    private void checkForNull(Object object, String message) {
+        if (object == null) {
+            log.error(message);
+            throw new NullPointerException();
+        }
+    }
 }

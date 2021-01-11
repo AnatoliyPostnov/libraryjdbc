@@ -1,6 +1,7 @@
 package com.postnov.libraryjdbc.service.impl;
 
 import com.postnov.libraryjdbc.dto.AuthorDto;
+import com.postnov.libraryjdbc.exception.NotFoundException;
 import com.postnov.libraryjdbc.model.Author;
 import com.postnov.libraryjdbc.repository.AuthorRepository;
 import com.postnov.libraryjdbc.service.AuthorService;
@@ -32,11 +33,10 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDto getAuthorById(Long id) {
         Author finedAuthor = authorRepository.finedAuthorByAuthorId(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Author with id: %s was not found exception", id)));
+                .orElseThrow(() -> new NotFoundException(String.format("Author with id = %s", id)));
         return AuthorDto.builder()
                 .name(finedAuthor.getName())
                 .surname(finedAuthor.getSurname())
                 .build();
     }
-
 }

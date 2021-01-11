@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Collections;
+
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -31,5 +33,14 @@ class BookAuthorServiceTest {
         bookAuthorService.save(bookAuthor);
 
         verify(bookAuthorRepository).save(bookAuthor);
+    }
+
+    @Test
+    void getAuthorsIdByBookId() {
+        when(bookAuthorRepository.finedAuthorsIdByBookId((long) 1)).thenReturn(Collections.singletonList((long) 1));
+
+        bookAuthorService.getAuthorsIdByBookId((long) 1);
+
+        verify(bookAuthorRepository).finedAuthorsIdByBookId((long) 1);
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -23,17 +25,31 @@ class BookRepositoryTest {
     @Autowired
     private GenreRepository genreRepository;
 
+    private Book book;
+
     @BeforeEach
     void setUp() {
+        Genre genre = new Genre((long) 1, "genre_name");
+        Genre savedGenre = genreRepository.save(genre);
+        book = new Book((long) 1, "book_name", savedGenre.getId());
     }
 
     @Test
     void saveTest() {
-        Genre genre = new Genre((long) 1, "genre_name");
-        Genre savedGenre = genreRepository.save(genre);
-        Book book = new Book((long) 1, "book_name", savedGenre.getId());
         Book savedBook = bookRepository.save(book);
         assertEquals(book, savedBook);
     }
 
+    @Test
+    void finedBookByBookNameTest(){
+        bookRepository.save(book);
+        Optional<Book> finedBook = bookRepository.finedBookByBookName(book.getName());
+        assertEquals(book, finedBook.get());
+    }
+
+    @Test
+    void finedBookByBookNameIfBookIsNotInDbTest(){
+        Optional<Book> finedBook = bookRepository.finedBookByBookName(book.getName());
+        assertEquals(Optional.empty(), finedBook);
+    }
 }

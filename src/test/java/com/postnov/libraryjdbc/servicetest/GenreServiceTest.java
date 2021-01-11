@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -49,6 +50,17 @@ class GenreServiceTest {
 
         verify(genreRepository).finedGenreByGenre(new Genre(genre.getName()));
         verify(genreRepository, never()).save(new Genre(genre.getName()));
+    }
+
+    @Test
+    void getGenreByIdTest(){
+        Genre finedGenre = new Genre("genreName");
+        when(genreRepository.finedGenreById((long) 1)).thenReturn(Optional.of(finedGenre));
+
+        GenreDto genreResult = genreService.getGenreById((long) 1);
+
+        verify(genreRepository).finedGenreById((long) 1);
+        assertEquals(finedGenre.getName(), genreResult.getName());
     }
 
     private GenreDto createGenreDto() {

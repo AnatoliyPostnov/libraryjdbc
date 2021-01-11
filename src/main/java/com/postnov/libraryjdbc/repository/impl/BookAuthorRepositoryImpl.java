@@ -29,10 +29,7 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
     @Override
     public BookAuthor save(BookAuthor bookAuthor) {
 
-        if (bookAuthor == null) {
-            log.error("The bookAuthor cannot be saved to the database because he is null");
-            throw new NullPointerException();
-        }
+        checkForNull(bookAuthor, "The bookAuthor cannot be saved to the database because he is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("book_id", bookAuthor.getBook_id())
@@ -53,10 +50,7 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
     @Override
     public List<Long> finedAuthorsIdByBookId(Long bookId) {
 
-        if (bookId == null) {
-            log.error("The list authorsId cannot be fined in the database because input bookId is null");
-            throw new NullPointerException();
-        }
+        checkForNull(bookId, "The list authorsId cannot be fined in the database because input bookId is null");
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("book_id", bookId);
@@ -72,4 +66,10 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
 
     }
 
+    private void checkForNull(Object object, String message) {
+        if (object == null) {
+            log.error(message);
+            throw new NullPointerException();
+        }
+    }
 }

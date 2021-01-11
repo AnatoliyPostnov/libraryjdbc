@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -33,22 +35,29 @@ class BookAuthorRepositoryTest {
     @Autowired
     private AuthorRepository authorRepository;
 
+    private BookAuthor bookAuthor;
+
     @BeforeEach
     void setUp() {
-
-    }
-
-    @Test
-    void saveTest() {
         Genre genre = new Genre((long) 1, "genre_name");
         Author author = new Author((long) 1, "author_name", "author_surname");
         Genre savedGenre = genreRepository.save(genre);
         Book book = new Book((long) 1, "book_name", savedGenre.getId());
         Book savedBook = bookRepository.save(book);
         Author savedAuthor = authorRepository.save(author);
-        BookAuthor bookAuthor = new BookAuthor((long) 1, savedBook.getId(), savedAuthor.getId());
+        bookAuthor = new BookAuthor((long) 1, savedBook.getId(), savedAuthor.getId());
+    }
+
+    @Test
+    void saveTest() {
         BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
         assertEquals(bookAuthor, savedBookAuthor);
     }
 
+    @Test
+    void finedAuthorsIdByBookIdTest() {
+        bookAuthorRepository.save(bookAuthor);
+        List<Long> authorsId = bookAuthorRepository.finedAuthorsIdByBookId(bookAuthor.getBook_id());
+        assertEquals(authorsId.size(), 1);
+    }
 }

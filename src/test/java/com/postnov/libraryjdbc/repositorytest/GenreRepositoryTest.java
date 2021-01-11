@@ -20,22 +20,42 @@ class GenreRepositoryTest {
     @Autowired
     private GenreRepository genreRepository;
 
+    private Genre genre;
+
     @BeforeEach
     void setUp() {
+        genre = new Genre((long) 1, "genre_name");
     }
 
     @Test
     void saveTest() {
-        Genre genre = new Genre((long) 1, "genre_name");
         Genre savedGenre = genreRepository.save(genre);
         assertEquals(genre, savedGenre);
     }
 
     @Test
     void finedGenreByGenreTest() {
-        Genre genre = new Genre((long) 1, "genre_name");
         genreRepository.save(genre);
         Optional<Genre> finedGenre = genreRepository.finedGenreByGenre(genre);
         assertEquals(genre, finedGenre.get());
+    }
+
+    @Test
+    void finedGenreByGenreIfGenreIsNotInDbTest() {
+        Optional<Genre> finedGenre = genreRepository.finedGenreByGenre(genre);
+        assertEquals(Optional.empty(), finedGenre);
+    }
+
+    @Test
+    void finedGenreByIdTest() {
+        Genre savedGenre = genreRepository.save(genre);
+        Optional<Genre> finedGenre = genreRepository.finedGenreById(savedGenre.getId());
+        assertEquals(genre, finedGenre.get());
+    }
+
+    @Test
+    void finedGenreByIdIfGenreIsNotInDbTest() {
+        Optional<Genre> finedGenre = genreRepository.finedGenreById(genre.getId());
+        assertEquals(Optional.empty(), finedGenre);
     }
 }
