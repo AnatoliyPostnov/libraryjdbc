@@ -35,5 +35,4 @@ public class LibraryJdbcControllerAdvice {
         log.error(re);
         return new ResponseEntity<>(responseMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }

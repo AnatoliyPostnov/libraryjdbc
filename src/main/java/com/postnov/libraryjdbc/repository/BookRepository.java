@@ -10,4 +10,6 @@ public interface BookRepository {
 
     Optional<Book> finedBookByBookName(String bookName);
 
+    Book update(Book book);
+
 }

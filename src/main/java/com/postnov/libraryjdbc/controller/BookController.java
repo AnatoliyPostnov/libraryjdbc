@@ -20,9 +20,13 @@ public class BookController {
         bookService.save(book);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<BookDto> getByBookName(@RequestParam(value = "bookName") String bookName) {
-        System.out.println(bookName);
         return ResponseEntity.of(bookService.getBookByBookName(bookName));
+    }
+
+    @PutMapping(value = "/update")
+    public void updateBook(@RequestBody BookDto book){
+        bookService.updateBook(book);
     }
 }

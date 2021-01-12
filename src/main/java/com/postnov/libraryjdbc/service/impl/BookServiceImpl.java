@@ -4,6 +4,7 @@ import com.postnov.libraryjdbc.dto.AuthorDto;
 import com.postnov.libraryjdbc.dto.BookDto;
 import com.postnov.libraryjdbc.dto.GenreDto;
 import com.postnov.libraryjdbc.exception.NotFoundException;
+import com.postnov.libraryjdbc.model.Author;
 import com.postnov.libraryjdbc.model.Book;
 import com.postnov.libraryjdbc.model.BookAuthor;
 import com.postnov.libraryjdbc.model.Genre;
@@ -79,5 +80,28 @@ public class BookServiceImpl implements BookService {
         }
 
         throw new NotFoundException(bookName);
+    }
+
+    @Override
+    @Transactional
+    public void updateBook(BookDto bookDto) {
+        Optional<Book> finedBookInDbOptional = bookRepository.finedBookByBookName(bookDto.getName());
+
+        if (finedBookInDbOptional.isPresent()) {
+
+            Genre savedGenre = genreService.save(bookDto.getGenre());
+
+            Book updatedBook = bookRepository.update(new Book(bookDto.getName(), savedGenre.getId()));
+
+            List<Long> savedAuthorsId = bookDto.getAuthors()
+                    .stream()
+                    .map(authorService::save)
+                    .map(Author::getId)
+                    .collect(Collectors.toList());
+
+            bookAuthorService.update(updatedBook, savedAuthorsId);
+        } else {
+            throw new NotFoundException(String.format("bookDto with bookName = %s", bookDto.getName()));
+        }
     }
 }

@@ -41,15 +41,25 @@ class BookRepositoryTest {
     }
 
     @Test
-    void finedBookByBookNameTest(){
+    void finedBookByBookNameTest() {
         bookRepository.save(book);
         Optional<Book> finedBook = bookRepository.finedBookByBookName(book.getName());
         assertEquals(book, finedBook.get());
     }
 
     @Test
-    void finedBookByBookNameIfBookIsNotInDbTest(){
+    void finedBookByBookNameIfBookIsNotInDbTest() {
         Optional<Book> finedBook = bookRepository.finedBookByBookName(book.getName());
         assertEquals(Optional.empty(), finedBook);
+    }
+
+    @Test
+    void updateTest() {
+        bookRepository.save(book);
+        Genre genre = new Genre((long) 2, "genre_name_update");
+        Genre savedGenre = genreRepository.save(genre);
+        book.setGenre_id(savedGenre.getId());
+        Book updatedBook = bookRepository.update(book);
+        assertEquals(updatedBook, book);
     }
 }

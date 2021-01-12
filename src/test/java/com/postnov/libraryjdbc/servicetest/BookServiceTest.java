@@ -92,14 +92,32 @@ class BookServiceTest {
         verify(authorService).getAuthorById((long) 1);
 
         BookDto finedBookDto = BookDto.builder()
-                        .name("bookName")
-                        .authors(Collections.singletonList(author))
-                        .genre(genre)
-                        .build();
+                .name("bookName")
+                .authors(Collections.singletonList(author))
+                .genre(genre)
+                .build();
 
         assertEquals(resultBookDto.get().getName(), finedBookDto.getName());
         assertEquals(resultBookDto.get().getAuthors(), finedBookDto.getAuthors());
         assertEquals(resultBookDto.get().getGenre(), finedBookDto.getGenre());
+    }
+
+    @Test
+    void updateTest() {
+        BookDto bookDto = createBookDto();
+
+        when(bookRepository.finedBookByBookName("bookName")).thenReturn(Optional.of(new Book((long) 1, "bookName", (long) 1)));
+        when(genreService.save(bookDto.getGenre())).thenReturn(new Genre((long) 1, "genre"));
+        when(bookRepository.update(new Book("bookName", (long) 1))).thenReturn(new Book((long) 1, "bookName", (long) 1));
+        when(authorService.save(bookDto.getAuthors().get(0))).thenReturn(new Author((long) 1, "authorName", "authorSurname"));
+
+        bookService.updateBook(bookDto);
+
+        verify(bookRepository).finedBookByBookName("bookName");
+        verify(genreService).save(bookDto.getGenre());
+        verify(bookRepository).update(new Book("bookName", (long) 1));
+        verify(authorService).save(bookDto.getAuthors().get(0));
+        verify(bookAuthorService).update(new Book((long) 1, "bookName", (long) 1), Collections.singletonList((long) 1));
     }
 
     private BookDto createBookDto() {

@@ -10,4 +10,6 @@ public interface BookService {
 
     Optional<BookDto> getBookByBookName(String bookName);
 
+    void updateBook(BookDto bookDto);
+
 }

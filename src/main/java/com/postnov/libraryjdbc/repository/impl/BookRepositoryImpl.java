@@ -69,6 +69,23 @@ public class BookRepositoryImpl implements BookRepository {
         return finedBook;
     }
 
+    @Override
+    public Book update(Book book) {
+
+        checkForNull(book, "The book cannot be fined in the database because he is null");
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", book.getName())
+                .addValue("genre_id", book.getGenre_id());
+
+        namedParameterJdbcOperations.update(
+                "update book set genre_id = :genre_id where name = :name",
+                params
+        );
+
+        return finedBookByBookName(book.getName()).get();
+    }
+
     private void checkForNull(Object object, String message) {
         if (object == null) {
             log.error(message);

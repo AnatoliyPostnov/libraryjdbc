@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,5 +60,23 @@ class BookAuthorRepositoryTest {
         bookAuthorRepository.save(bookAuthor);
         List<Long> authorsId = bookAuthorRepository.finedAuthorsIdByBookId(bookAuthor.getBook_id());
         assertEquals(authorsId.size(), 1);
+    }
+
+    @Test
+    void finedBookAuthorByBookAuthorTest() {
+        BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
+        Optional<BookAuthor> finedBookAuthor = bookAuthorRepository.finedBookAuthorByBookAuthor(bookAuthor);
+        assertEquals(savedBookAuthor.getAuthor_id(), finedBookAuthor.get().getAuthor_id());
+        assertEquals(savedBookAuthor.getBook_id(), finedBookAuthor.get().getBook_id());
+    }
+
+    @Test
+    void deleteTest() {
+        BookAuthor savedBookAuthor = bookAuthorRepository.save(bookAuthor);
+        BookAuthor deletedBookAuthor = bookAuthorRepository.delete(bookAuthor);
+
+        assertEquals(savedBookAuthor.getBook_id(), deletedBookAuthor.getBook_id());
+        assertEquals(savedBookAuthor.getAuthor_id(), deletedBookAuthor.getAuthor_id());
+        assertEquals(Optional.empty(), bookAuthorRepository.finedBookAuthorByBookAuthor(bookAuthor));
     }
 }
