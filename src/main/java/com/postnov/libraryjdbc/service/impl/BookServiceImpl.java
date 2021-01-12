@@ -104,4 +104,17 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException(String.format("bookDto with bookName = %s", bookDto.getName()));
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteBookByBookName(String bookName) {
+        Optional<Book> deletedBookOptional = bookRepository.finedBookByBookName(bookName);
+        if (deletedBookOptional.isPresent()){
+            Book deletedBook = deletedBookOptional.get();
+            bookAuthorService.deleteBookAuthorsByBookId(deletedBook.getId());
+            bookRepository.delete(deletedBook);
+        } else {
+            throw new NotFoundException(String.format("book with bookName = %s", bookName));
+        }
+    }
 }

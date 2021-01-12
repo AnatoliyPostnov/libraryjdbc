@@ -86,6 +86,24 @@ public class BookRepositoryImpl implements BookRepository {
         return finedBookByBookName(book.getName()).get();
     }
 
+    @Override
+    public Book delete(Book book) {
+
+        checkForNull(book, "The book cannot be fined in the database because he is null");
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("name", book.getName());
+
+        Optional<Book> deletedBook = finedBookByBookName(book.getName());
+
+        namedParameterJdbcOperations.update(
+                "delete from book where name = :name",
+                params
+        );
+
+        return deletedBook.get();
+    }
+
     private void checkForNull(Object object, String message) {
         if (object == null) {
             log.error(message);

@@ -9,10 +9,9 @@ public interface BookAuthorRepository {
 
     BookAuthor save(BookAuthor bookAuthor);
 
-    List<Long> finedAuthorsIdByBookId(Long bookId);
-
     Optional<BookAuthor> finedBookAuthorByBookAuthor(BookAuthor bookAuthor);
 
-    BookAuthor delete(BookAuthor bookAuthor);
+    List<BookAuthor> finedBookAuthorsByBookId(Long bookId);
 
+    BookAuthor delete(BookAuthor bookAuthor);
 }

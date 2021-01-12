@@ -3,6 +3,7 @@ package com.postnov.libraryjdbc.servicetest;
 import com.postnov.libraryjdbc.dto.AuthorDto;
 import com.postnov.libraryjdbc.dto.BookDto;
 import com.postnov.libraryjdbc.dto.GenreDto;
+import com.postnov.libraryjdbc.exception.NotFoundException;
 import com.postnov.libraryjdbc.model.Author;
 import com.postnov.libraryjdbc.model.Book;
 import com.postnov.libraryjdbc.model.BookAuthor;
@@ -23,6 +24,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -118,6 +121,27 @@ class BookServiceTest {
         verify(bookRepository).update(new Book("bookName", (long) 1));
         verify(authorService).save(bookDto.getAuthors().get(0));
         verify(bookAuthorService).update(new Book((long) 1, "bookName", (long) 1), Collections.singletonList((long) 1));
+    }
+
+    @Test
+    void deleteBookByBookNameIfBookIsInDbTest() {
+        when(bookRepository.finedBookByBookName("bookName")).thenReturn(Optional.of(new Book((long) 1, "bookName", (long) 1)));
+
+        bookService.deleteBookByBookName("bookName");
+
+        verify(bookAuthorService).deleteBookAuthorsByBookId((long) 1);
+        verify(bookRepository).delete(new Book((long) 1, "bookName", (long) 1));
+    }
+
+    @Test
+    void deleteBookByBookNameIfBookIsNotInDbTest() {
+        when(bookRepository.finedBookByBookName("bookName")).thenReturn(Optional.empty());
+
+        Throwable thrown = catchThrowable(() -> bookService.deleteBookByBookName("bookName"));
+        assertThat(thrown).isInstanceOf(NotFoundException.class);
+
+        verify(bookAuthorService, never()).deleteBookAuthorsByBookId((long) 1);
+        verify(bookRepository, never()).delete(new Book((long) 1, "bookName", (long) 1));
     }
 
     private BookDto createBookDto() {

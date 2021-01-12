@@ -32,11 +32,6 @@ public class BookAuthorServiceImpl implements BookAuthorService {
     }
 
     @Override
-    public List<Long> getAuthorsIdByBookId(Long bookId) {
-        return bookAuthorRepository.finedAuthorsIdByBookId(bookId);
-    }
-
-    @Override
     public void update(Book book, List<Long> newAuthorsId) {
         List<Long> oldAuthorsId = getAuthorsIdByBookId(book.getId());
         List<Long> oldAuthorsIdThatNotInNewAuthorsId = oldAuthorsId
@@ -47,5 +42,19 @@ public class BookAuthorServiceImpl implements BookAuthorService {
                 authorId -> bookAuthorRepository.delete(new BookAuthor(book.getId(), authorId))
         );
         newAuthorsId.forEach(authorId -> save(new BookAuthor(book.getId(), authorId)));
+    }
+
+    @Override
+    public void deleteBookAuthorsByBookId(Long bookId) {
+        List<BookAuthor> deletedBookAuthors = bookAuthorRepository.finedBookAuthorsByBookId(bookId);
+        deletedBookAuthors.forEach(bookAuthorRepository::delete);
+    }
+
+    @Override
+    public List<Long> getAuthorsIdByBookId(Long bookId) {
+        return bookAuthorRepository.finedBookAuthorsByBookId(bookId)
+                .stream()
+                .map(BookAuthor::getAuthor_id)
+                .collect(Collectors.toList());
     }
 }

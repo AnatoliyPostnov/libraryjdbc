@@ -26,7 +26,12 @@ public class BookController {
     }
 
     @PutMapping(value = "/update")
-    public void updateBook(@RequestBody BookDto book){
+    public void updateBook(@RequestBody BookDto book) {
         bookService.updateBook(book);
+    }
+
+    @DeleteMapping(value = "/delete")
+    public void deleteBook(@RequestParam(value = "bookName") String bookName) {
+        bookService.deleteBookByBookName(bookName);
     }
 }

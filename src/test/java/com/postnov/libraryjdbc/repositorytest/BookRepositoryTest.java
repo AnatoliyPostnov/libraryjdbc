@@ -62,4 +62,12 @@ class BookRepositoryTest {
         Book updatedBook = bookRepository.update(book);
         assertEquals(updatedBook, book);
     }
+
+    @Test
+    void deleteTest() {
+        Book savedBook = bookRepository.save(book);
+        Book deletedBook = bookRepository.delete(book);
+        assertEquals(savedBook, deletedBook);
+        assertEquals(Optional.empty(), bookRepository.finedBookByBookName(book.getName()));
+    }
 }

@@ -12,4 +12,6 @@ public interface BookRepository {
 
     Book update(Book book);
 
+    Book delete(Book book);
+
 }

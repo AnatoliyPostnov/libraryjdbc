@@ -12,4 +12,6 @@ public interface BookService {
 
     void updateBook(BookDto bookDto);
 
+    void deleteBookByBookName(String bookName);
+
 }

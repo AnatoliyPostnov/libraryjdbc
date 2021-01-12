@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -52,12 +53,12 @@ class BookAuthorServiceTest {
     }
 
     @Test
-    void getAuthorsIdByBookId() {
-        when(bookAuthorRepository.finedAuthorsIdByBookId((long) 1)).thenReturn(Collections.singletonList((long) 1));
+    void getBookAuthorsByBookIdTest() {
+        when(bookAuthorRepository.finedBookAuthorsByBookId((long) 1)).thenReturn(Collections.singletonList(new BookAuthor((long) 1, (long) 1)));
 
         bookAuthorService.getAuthorsIdByBookId((long) 1);
 
-        verify(bookAuthorRepository).finedAuthorsIdByBookId((long) 1);
+        verify(bookAuthorRepository).finedBookAuthorsByBookId((long) 1);
     }
 
     @Test
@@ -66,11 +67,11 @@ class BookAuthorServiceTest {
         List<Long> newAuthorsId = Collections.singletonList((long) 1);
 
         when(updatedBook.getId()).thenReturn((long) 1);
-        when(bookAuthorRepository.finedAuthorsIdByBookId((long) 1)).thenReturn(Collections.singletonList((long) 1));
+        when(bookAuthorRepository.finedBookAuthorsByBookId((long) 1)).thenReturn(Collections.singletonList(new BookAuthor((long) 1, (long) 1)));
 
         bookAuthorService.update(updatedBook, newAuthorsId);
 
-        verify(bookAuthorRepository).finedAuthorsIdByBookId((long) 1);
+        verify(bookAuthorRepository).finedBookAuthorsByBookId((long) 1);
         verify(bookAuthorRepository, never()).delete(new BookAuthor((long) 1, (long) 1));
     }
 
@@ -80,11 +81,31 @@ class BookAuthorServiceTest {
         List<Long> newAuthorsId = Collections.singletonList((long) 1);
 
         when(updatedBook.getId()).thenReturn((long) 2);
-        when(bookAuthorRepository.finedAuthorsIdByBookId((long) 2)).thenReturn(Collections.singletonList((long) 2));
+        when(bookAuthorRepository.finedBookAuthorsByBookId((long) 2)).thenReturn(Collections.singletonList(new BookAuthor((long) 2, (long) 2)));
 
         bookAuthorService.update(updatedBook, newAuthorsId);
 
-        verify(bookAuthorRepository).finedAuthorsIdByBookId((long) 2);
+        verify(bookAuthorRepository).finedBookAuthorsByBookId((long) 2);
         verify(bookAuthorRepository).delete(new BookAuthor((long) 2, (long) 2));
+    }
+
+    @Test
+    void deleteBookAuthorsByBookIdTest() {
+        when(bookAuthorRepository.finedBookAuthorsByBookId((long) 1)).thenReturn(Collections.singletonList(new BookAuthor((long) 1, (long) 1)));
+
+        bookAuthorService.deleteBookAuthorsByBookId((long) 1);
+
+        verify(bookAuthorRepository).finedBookAuthorsByBookId((long) 1);
+        verify(bookAuthorRepository).delete(new BookAuthor((long) 1, (long) 1));
+    }
+
+    @Test
+    void getAuthorsIdByBookIdTest() {
+        when(bookAuthorRepository.finedBookAuthorsByBookId((long) 1)).thenReturn(Collections.singletonList(new BookAuthor((long) 1, (long) 1)));
+
+        List<Long> result = bookAuthorService.getAuthorsIdByBookId((long) 1);
+
+        verify(bookAuthorRepository).finedBookAuthorsByBookId((long) 1);
+        assertEquals((long) 1, result.get(0));
     }
 }

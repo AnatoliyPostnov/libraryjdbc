@@ -56,9 +56,9 @@ class BookAuthorRepositoryTest {
     }
 
     @Test
-    void finedAuthorsIdByBookIdTest() {
+    void finedBookAuthorsByBookIdTest() {
         bookAuthorRepository.save(bookAuthor);
-        List<Long> authorsId = bookAuthorRepository.finedAuthorsIdByBookId(bookAuthor.getBook_id());
+        List<BookAuthor> authorsId = bookAuthorRepository.finedBookAuthorsByBookId(bookAuthor.getBook_id());
         assertEquals(authorsId.size(), 1);
     }
 

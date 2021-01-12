@@ -10,9 +10,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @Log4j2
@@ -50,25 +50,6 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
     }
 
     @Override
-    public List<Long> finedAuthorsIdByBookId(Long bookId) {
-
-        checkForNull(bookId, "The list authorsId cannot be fined in the database because input bookId is null");
-
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("book_id", bookId);
-
-        return namedParameterJdbcOperations.query(
-                "select * from book_author where book_id = :book_id",
-                params,
-                bookAuthorMapper
-        )
-                .stream()
-                .map(BookAuthor::getAuthor_id)
-                .collect(Collectors.toList());
-
-    }
-
-    @Override
     public Optional<BookAuthor> finedBookAuthorByBookAuthor(BookAuthor bookAuthor) {
 
         checkForNull(bookAuthor, "The bookAuthor cannot be fined in the database because input bookAuthor is null");
@@ -92,6 +73,20 @@ public class BookAuthorRepositoryImpl implements BookAuthorRepository {
         }
 
         return finedBookAuthor;
+    }
+
+    @Override
+    public List<BookAuthor> finedBookAuthorsByBookId(Long bookId) {
+        checkForNull(bookId, "The list authorsId cannot be fined in the database because input bookId is null");
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("book_id", bookId);
+
+        return new ArrayList<>(namedParameterJdbcOperations.query(
+                "select * from book_author where book_id = :book_id",
+                params,
+                bookAuthorMapper
+        ));
     }
 
     @Override
